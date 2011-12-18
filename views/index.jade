@@ -1,0 +1,23 @@
+h1= title
+p Welcome to #{title}
+
+script(src="/socket.io/socket.io.js", type="application/javascript")
+script
+  var color = ['#',
+  Math.floor(Math.random()*255).toString(16),
+  Math.floor(Math.random()*255).toString(16),
+  Math.floor(Math.random()*255).toString(16)
+  ].join('')
+  
+  var socket = io.connect()
+  
+  // listen for mouse position.
+  socket.on('onBroadcastMoveEvent', function(data){
+    $('<div class="dot">').css({backgroundColor: data.color, top:data.clientY, left:data.clientX}).appendTo("body");
+    console.log("broadcast", data)
+  })
+  
+  // listen for mousemove. send to mouse position.
+  $('body').mousemove(function(e){
+    socket.emit('userMouseMoveEvent', { clientX: e.clientX, clientY: e.clientY, color:color });
+  })
